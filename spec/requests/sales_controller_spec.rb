@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'SalesController', type: :request do
   describe 'POST /sales/import' do
-    let(:file) { fixture_file_upload('sales_records_valid.csv') }
+    let(:file) { fixture_file_upload('sales_records_valid.csv', 'text/csv') }
 
     before do
       post '/sales/import', params: {file: file}
@@ -35,7 +35,7 @@ describe 'SalesController', type: :request do
 
           context 'when uploading next file, which has missing fields' do
             it 'does not persist data to database' do
-              file_path = fixture_file_upload('sales_records_invalid_missing_region.csv')
+              file_path = fixture_file_upload('sales_records_invalid_missing_region.csv', 'text/csv')
               post '/sales/import', params: {file: file_path}
               expect(response.status).to eq 200
               Sidekiq::Worker.drain_all rescue nil
@@ -48,62 +48,62 @@ describe 'SalesController', type: :request do
         end
 
         context 'and file contains missing region' do
-          let(:file) { fixture_file_upload('sales_records_invalid_missing_region.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_missing_region.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains missing country' do
-          let(:file) { fixture_file_upload('sales_records_invalid_missing_country.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_missing_country.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains missing item type' do
-          let(:file) { fixture_file_upload('sales_records_invalid_missing_item_type.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_missing_item_type.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains missing order date' do
-          let(:file) { fixture_file_upload('sales_records_invalid_missing_order_date.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_missing_order_date.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains missing order id' do
-          let(:file) { fixture_file_upload('sales_records_invalid_missing_order_id.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_missing_order_id.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains missing sales channel' do
-          let(:file) { fixture_file_upload('sales_records_invalid_missing_sales_channel.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_missing_sales_channel.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains missing total revenue' do
-          let(:file) { fixture_file_upload('sales_records_invalid_missing_total_revenue.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_missing_total_revenue.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains missing unit price' do
-          let(:file) { fixture_file_upload('sales_records_invalid_missing_unit_price.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_missing_unit_price.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains missing units sold' do
-          let(:file) { fixture_file_upload('sales_records_invalid_missing_units_sold.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_missing_units_sold.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains negative units sold' do
-          let(:file) { fixture_file_upload('sales_records_invalid_negative_units_sold.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_negative_units_sold.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains negative unit price' do
-          let(:file) { fixture_file_upload('sales_records_invalid_negative_unit_price.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_negative_unit_price.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
 
         context 'and file contains negative total revenue' do
-          let(:file) { fixture_file_upload('sales_records_invalid_negative_total_revenue.csv') }
+          let(:file) { fixture_file_upload('sales_records_invalid_negative_total_revenue.csv', 'text/csv') }
           include_examples 'does not persist data to database'
         end
       end
@@ -125,11 +125,11 @@ describe 'SalesController', type: :request do
       end
     end
   end
-  
+
   describe 'GET /sales' do
     context 'when sales have been imported to the system' do
       before do
-        post '/sales/import', params: {file: fixture_file_upload('sales_records_valid.csv')}
+        post '/sales/import', params: {file: fixture_file_upload('sales_records_valid.csv', 'text/csv')}
         expect(response.status).to eq 200
         Sidekiq::Worker.drain_all rescue nil
       end
